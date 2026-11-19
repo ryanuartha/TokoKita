@@ -1,0 +1,32 @@
+#!/usr/bin/env sh
+# Lightweight Gradle launcher for this project. It downloads the pinned Gradle
+# distribution on first use, so the binary wrapper JAR does not need to ship
+# inside the source ZIP.
+set -eu
+
+GRADLE_VERSION="9.3.1"
+GRADLE_HOME_DIR="${GRADLE_USER_HOME:-$HOME/.gradle}/wrapper/dists/tokokita/gradle-${GRADLE_VERSION}"
+GRADLE_BIN="${GRADLE_HOME_DIR}/gradle-${GRADLE_VERSION}/bin/gradle"
+ZIP_FILE="${GRADLE_HOME_DIR}/gradle-${GRADLE_VERSION}-bin.zip"
+URL="https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
+
+if [ ! -x "$GRADLE_BIN" ]; then
+  mkdir -p "$GRADLE_HOME_DIR"
+  echo "Gradle ${GRADLE_VERSION} belum tersedia. Mengunduh distribusi Gradle..."
+  if command -v curl >/dev/null 2>&1; then
+    curl -fL --retry 3 "$URL" -o "$ZIP_FILE"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -O "$ZIP_FILE" "$URL"
+  else
+    echo "curl atau wget diperlukan untuk mengunduh Gradle." >&2
+    exit 1
+  fi
+  if command -v unzip >/dev/null 2>&1; then
+    unzip -q -o "$ZIP_FILE" -d "$GRADLE_HOME_DIR"
+  else
+    echo "Perintah unzip diperlukan untuk mengekstrak Gradle." >&2
+    exit 1
+  fi
+fi
+
+exec "$GRADLE_BIN" "$@"

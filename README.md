@@ -1,68 +1,43 @@
-# TokoKita — E-Commerce & Lifestyle Platform
+# TokoKita
 
-TokoKita adalah aplikasi katalog dan belanja online berbasis Flutter yang dirancang dengan standar desain profesional, antarmuka yang bersih, serta pengalaman pengguna yang responsif.
-
-## Fitur Utama
-
-- **Layar Masuk (Welcome Screen)**: Autentikasi selamat datang dengan sapaan personal menggunakan nama lengkap pengguna.
-- **Beranda & Katalog Produk**: 
-  - Karosel promo interaktif dan pencarian produk cerdas (*smart multi-token search*).
-  - Filter kategori produk (Elektronik, Pakaian, Aksesoris) dengan penyusunan katalog beranda yang dinamis.
-  - Kartu produk dalam bentuk *Grid* dan *List* yang dilengkapi lencana mall dan diskon.
-- **Detail Produk**: Galeri gambar, pilihan varian ukuran & warna, ulasan pengguna, dan panel aksi cepat (*Beli Sekarang* & *Keranjang*).
-- **Keranjang & Checkout**: Pengelolaan kuantitas barang, pemilihan item, dan simulasi pembayaran instan.
-- **Konfirmasi Pesanan Sukses**: Layar ringkasan transaksi dengan nomor referensi pesanan.
-
-## Panduan Menjalankan Aplikasi
-
-Pastikan Flutter SDK sudah terinstal di komputer Anda. Buka terminal pada folder proyek, lalu jalankan perintah berikut:
-
-```bash
-# Mengunduh dependensi
-flutter pub get
-
-# Memeriksa perangkat yang terhubung
-flutter devices
-
-# Menjalankan aplikasi dalam mode debug
-flutter run
-```
-
-## Membangun Berkas APK Debug
-
-Untuk menghasilkan berkas APK debug secara mandiri, jalankan:
-
-```bash
-flutter build apk --debug
-```
-
-Berkas keluaran akan tersedia di:
-```text
-build/app/outputs/flutter-apk/app-debug.apk
-```
-
-## Struktur Proyek
+Repository ini dipisahkan berdasarkan area aplikasi:
 
 ```text
 TokoKita/
-├── android/                   # Konfigurasi native Android & Splash
-├── assets/
-│   └── images/                # Aset gambar lokal produk & logo
-├── lib/
-│   ├── data/
-│   │   └── product_data.dart  # Sumber data katalog produk
-│   ├── models/
-│   │   └── product.dart       # Model data produk
-│   ├── screens/               # Kumpulan layar aplikasi
-│   ├── theme/                 # Token desain warna, tipografi, dan tema
-│   ├── widgets/               # Komponen UI modular (BounceButton, Card, dll)
-│   └── main.dart              # Titik masuk utama aplikasi
-├── pubspec.yaml               # Konfigurasi dependensi dan aset
-└── analysis_options.yaml      # Aturan analisis statis kode
+├── Front-End/   # Aplikasi Flutter
+├── Back-End/    # Supabase SQL migrations dan Edge Functions Midtrans
+└── .gitignore   # Aturan Git untuk seluruh repository
 ```
 
-## Catatan Pengembangan
+## Menjalankan aplikasi
 
-- Seluruh data produk dikelola secara lokal pada `lib/data/product_data.dart`.
-- Tipografi utama menggunakan **Plus Jakarta Sans** untuk judul/harga dan **Roboto** untuk teks isi (*body*).
-- Desain tombol interaktif telah dilengkapi efek pantulan taktil (*BounceButton*) untuk kenyamanan navigasi pengguna.
+Salin `Front-End/config/local.example.json` menjadi
+`Front-End/config/local.json`, lalu isi URL proyek dan publishable/anon key
+Supabase. File konfigurasi lokal tersebut diabaikan Git.
+
+```bash
+cd Front-End
+flutter pub get
+flutter run --dart-define-from-file=config/local.json
+```
+
+## Distribusi langsung dan transaksi
+
+Aplikasi tidak perlu diunggah ke Play Store atau App Store. Setelah Supabase
+dan Midtrans Sandbox dikonfigurasi serta alur checkout, webhook, dan perubahan
+status pesanan berhasil diuji, APK Android dapat dibuat untuk dipasang langsung.
+Build release harus menggunakan upload key pribadi; ikuti petunjuk signing di
+[Front-End/README.md](./Front-End/README.md). Jangan gunakan debug key untuk
+distribusi:
+
+```bash
+flutter build apk --release --dart-define-from-file=config/local.json
+```
+
+APK berada di `Front-End/build/app/outputs/flutter-apk/app-release.apk`.
+Perangkat tetap memerlukan koneksi internet untuk autentikasi, stok/pesanan
+Supabase, dan konfirmasi pembayaran Midtrans. Gunakan mode produksi hanya
+setelah pengujian Sandbox menyelesaikan seluruh alur transaksi.
+
+Petunjuk deploy Supabase, konfigurasi Midtrans, dan penyiapan admin ada di
+[Back-End/README.md](./Back-End/README.md).

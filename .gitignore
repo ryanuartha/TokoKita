@@ -13,4 +13,13 @@ android/.gradle/
 android/local.properties
 android/key.properties
 android/app/*.jks
+**/.gradle/
+**/.kotlin/
+**/local.properties
+**/key.properties
+**/*.jks
+Back-End/supabase/.temp/
 ios/Flutter/Generated.xcconfig
+Front-End/config/local.json
+Back-End/.env.local
+/supabase/.temp/
